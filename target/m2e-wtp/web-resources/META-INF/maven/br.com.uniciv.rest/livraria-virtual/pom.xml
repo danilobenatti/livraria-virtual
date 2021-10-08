@@ -32,8 +32,12 @@
 			<artifactId>jersey-hk2</artifactId>
 		</dependency>
 
-		<!-- uncomment this to get JSON support <dependency> <groupId>org.glassfish.jersey.media</groupId> 
-			<artifactId>jersey-media-json-binding</artifactId> </dependency> -->
+		<!-- uncomment this to get JSON support 
+		<dependency>
+			<groupId>org.glassfish.jersey.media</groupId> 
+			<artifactId>jersey-media-json-binding</artifactId>
+		</dependency>
+		-->
 
 		<dependency>
 			<groupId>org.eclipse.jetty</groupId>
@@ -53,6 +57,10 @@
 			<artifactId>jersey-test-framework-provider-bundle</artifactId>
 			<type>pom</type>
 			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.glassfish.jersey.media</groupId>
+			<artifactId>jersey-media-jaxb</artifactId>
 		</dependency>
 	</dependencies>
 
