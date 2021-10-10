@@ -11,7 +11,7 @@ public class LivroResource {
 	private LivroRepositorio livroRepositorio = new LivroRepositorio();
 
 	@GET
-	@Produces(value = MediaType.APPLICATION_XML)
+	@Produces(value = {MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
 	public Livros getLivros() {
 		Livros livros = new Livros();
 		livros.setLivros(livroRepositorio.getLivros());
