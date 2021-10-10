@@ -24,4 +24,13 @@ public class LivroRepositorio {
 		return new ArrayList<>(livros.values());
 	}
 
+	public Livro getLivroPorIsbn(String isbn) {
+		for (Livro livro : livros.values()) {
+			if (livro.getIsbn().equalsIgnoreCase(isbn)) {
+				return livro;
+			}
+		}
+		return null;
+	}
+
 }
