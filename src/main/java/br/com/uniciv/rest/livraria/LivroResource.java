@@ -40,7 +40,11 @@ public class LivroResource {
 
 	@POST
 	public Response saveLivro(Livro livro) {
-		livroRepositorio.addLivro(livro);
+		try {
+			livroRepositorio.addLivro(livro);
+		} catch (LivroExistenteException e) {
+			throw new WebApplicationException(Status.CONFLICT);
+		}
 		URI uri = UriBuilder.fromPath("livro/{isbn}")
 				.build(livro.getIsbn());
 		return Response.created(uri).entity(livro).build();
