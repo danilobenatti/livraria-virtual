@@ -5,6 +5,7 @@ import java.net.URI;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -19,7 +20,7 @@ import javax.ws.rs.core.UriBuilder;
 @Consumes(value = {MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
 public class LivroResource {
 
-	private LivroRepositorio livroRepositorio = new LivroRepositorio();
+	private LivroRepositorio livroRepositorio = LivroRepositorio.getInstance();
 
 	@GET
 	public Livros getLivros() {
@@ -45,9 +46,25 @@ public class LivroResource {
 		} catch (LivroExistenteException e) {
 			throw new WebApplicationException(Status.CONFLICT);
 		}
-		URI uri = UriBuilder.fromPath("livro/{isbn}")
-				.build(livro.getIsbn());
+		URI uri = UriBuilder.fromPath("livro/{isbn}").build(livro.getIsbn());
 		return Response.created(uri).entity(livro).build();
+	}
+
+	@PUT
+	@Path(value = "/{isbn}")
+	public Response updateLivro(@PathParam(value = "isbn") String isbn,
+			Livro livro) {
+		try {
+			Livro livro2 = livroRepositorio.getLivroPorIsbn(isbn);
+			livro2.setAutor(livro.getAutor());
+			livro2.setGenero(livro.getGenero());
+			livro2.setPreco(livro.getPreco());
+			livro2.setTitulo(livro.getTitulo());
+			livroRepositorio.updateLivro(livro2);
+		} catch (LivroNaoEncontradoException e) {
+			throw new WebApplicationException(Status.NOT_FOUND);
+		}
+		return Response.ok().entity(livro).build();
 	}
 
 }
