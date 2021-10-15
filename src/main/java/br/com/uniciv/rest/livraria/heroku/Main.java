@@ -1,6 +1,14 @@
 package br.com.uniciv.rest.livraria.heroku;
 
+import java.io.File;
+
+import org.eclipse.jetty.http.HttpVersion;
+import org.eclipse.jetty.server.HttpConfiguration;
+import org.eclipse.jetty.server.HttpConnectionFactory;
 import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.server.ServerConnector;
+import org.eclipse.jetty.server.SslConnectionFactory;
+import org.eclipse.jetty.util.ssl.SslContextFactory;
 import org.eclipse.jetty.webapp.WebAppContext;
 
 /**
@@ -11,15 +19,34 @@ import org.eclipse.jetty.webapp.WebAppContext;
 public class Main {
 
 	public static void main(String[] args) throws Exception {
-		// The port that we should run on can be set into an environment
-		// variable
-		// Look for that variable and default to 8080 if it isn't there.
-		String webPort = System.getenv("PORT");
-		if (webPort == null || webPort.isEmpty()) {
-			webPort = "8080";
-		}
 
-		final Server server = new Server(Integer.valueOf(webPort));
+		File keystoreFile = new File("server.keystore");
+		final Server server = new Server();
+
+		HttpConfiguration httpConfiguration = new HttpConfiguration();
+		httpConfiguration.setSecureScheme("https");
+		httpConfiguration.setSecurePort(8443);
+
+		ServerConnector connector = new ServerConnector(server,
+				new HttpConnectionFactory(httpConfiguration));
+		connector.setPort(8080);
+
+		SslContextFactory.Server sslContextFactory = new SslContextFactory.Server();
+		sslContextFactory.setKeyStorePath(keystoreFile.getAbsolutePath());
+		sslContextFactory.setKeyStorePassword("livraria");
+		sslContextFactory.setKeyManagerPassword("livraria");
+
+		HttpConfiguration httpsConfiguration = new HttpConfiguration(
+				httpConfiguration);
+
+		ServerConnector serverConnector = new ServerConnector(server,
+				new SslConnectionFactory(sslContextFactory,
+						HttpVersion.HTTP_1_1.asString()),
+				new HttpConnectionFactory(httpsConfiguration));
+		serverConnector.setPort(8443);
+
+		server.setConnectors(new ServerConnector[]{connector, serverConnector});
+
 		final WebAppContext root = new WebAppContext();
 
 		root.setContextPath("/livraria-virtual");
@@ -41,5 +68,7 @@ public class Main {
 
 		server.start();
 		server.join();
+		
+		server.stop();
 	}
 }

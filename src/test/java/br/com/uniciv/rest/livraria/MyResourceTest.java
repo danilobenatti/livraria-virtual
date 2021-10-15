@@ -10,6 +10,7 @@ import static org.junit.Assert.assertEquals;
 
 import br.com.uniciv.rest.livraria.MyResource;
 
+@SuppressWarnings("unused")
 public class MyResourceTest extends JerseyTest {
 
 	@Override
